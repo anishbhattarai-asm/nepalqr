@@ -1,0 +1,31 @@
+{
+  "name": "nepalqr",
+  "version": "0.1.0",
+  "description": "EMVCo Merchant-Presented Mode QR codec. Decode a static merchant QR, inject a transaction amount, re-encode with a valid CRC.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./payments": "./src/payments.js"
+  },
+  "bin": {
+    "nepalqr": "./bin/cli.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "emvco",
+    "qr",
+    "nepal",
+    "payments",
+    "pos",
+    "tlv"
+  ],
+  "license": "MIT"
+}
