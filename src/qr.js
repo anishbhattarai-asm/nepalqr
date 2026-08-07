@@ -198,6 +198,12 @@ export function decode(payload) {
  *   - long hex or base64-looking values anywhere
  *
  * A clean report is encouraging but not proof. Only a live scan settles it.
+ *
+ * That scan has been done for Fonepay: two real merchant QRs inspected clean, this
+ * library's CRC reproduced both issuers' own checksums byte-for-byte, and an injected
+ * Rs 1.00 was scanned with eSewa and settled. So Fonepay honours tag 54 and does not
+ * reject 01=12 from a statically-provisioned merchant. That is one acquirer at one
+ * point in time, not a general result: run the same check against your own QR.
  */
 export function detectOpaqueFields(payload) {
   const suspects = [];

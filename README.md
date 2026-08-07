@@ -52,6 +52,27 @@ You need one real merchant QR. Then:
 
 Step 4 is the whole project. Everything else is downstream of it.
 
+## Result: it works against Fonepay
+
+That test has been run.
+
+- `inspect` on two real Fonepay merchant QRs reported clean. No private
+  templates, no non-standard subtags, no issuer integrity data.
+- This library's CRC independently reproduced both issuers' own checksums
+  byte-for-byte, which says the codec agrees with real issuers rather than only
+  with its own fixtures.
+- Rs 1.00 was injected into one of them, rendered, and scanned with eSewa. The
+  amount pre-filled and **the payment settled.**
+
+So for Fonepay, a merchant provisioned only for a static QR does have dynamic
+amounts accepted: tag 54 is honoured and `01=12` is not rejected.
+
+**What that does not establish.** One acquirer, at one point in time. Another
+acquirer may sign its payloads, and any of them may start to. It also says
+nothing about whether you are *permitted* to do this, which is a separate
+question with its own section below. Re-run the four steps against your own QR
+before depending on it.
+
 ## Developing without a real QR
 
 ```
@@ -61,10 +82,6 @@ $ npx nepalqr fixture --signed     # one carrying a fake issuer signature
 
 Structurally real, invented merchant identifiers, will not move money. Good
 enough to build the POS against; useless for answering the question above.
-
-**Every identifier in this repository is invented.** The fixtures, the sample
-SMS and the test data contain no real merchant id, account, phone number or
-transaction reference. Point it at your own QR to do anything useful.
 
 ## API
 
