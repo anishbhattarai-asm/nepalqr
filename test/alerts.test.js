@@ -67,3 +67,41 @@ test('the RRN is what makes a duplicate forward detectable', () => {
   assert.equal(first.reference, second.reference);
   assert.ok(first.reference, 'without a reference, a duplicate is indistinguishable from a second payment');
 });
+
+// --- other issuers on the same network ------------------------------------
+// Each bank words its own alert. These are real messages, not invented ones.
+
+test('reads an NMB alert, including a masked payer number', () => {
+  const alert = parseAlert(
+    'Transaction success for Rs.1800 from 974****310 via Fonepay QR for RRN 95ZJSVUE631, Download: onelink.to/s4a5mj'
+  );
+
+  assert.equal(alert.amount, 1800);
+  assert.equal(alert.payer, '974****310'); // NMB masks the middle digits
+  assert.equal(alert.reference, '95ZJSVUE631');
+  assert.equal(alert.channel, 'Fonepay QR');
+  assert.equal(alert.source, 'nmb');
+});
+
+test('an unknown issuer still parses from amount + RRN, flagged as unknown', () => {
+  const alert = parseAlert(
+    'Dear Customer, NPR 250.50 credited to your account via FonePay QR. RRN: XY9Z8W7V6U. Thank you.'
+  );
+
+  assert.equal(alert.amount, 250.5);
+  assert.equal(alert.reference, 'XY9Z8W7V6U');
+  assert.equal(alert.source, 'unknown'); // matched by shape, not by a known sender
+});
+
+// A settlement notice is the same money arriving again as a batch. It carries no
+// RRN, and that is what keeps it out — parsing it would settle a tab twice.
+test('a settlement notice is not mistaken for a payment', () => {
+  assert.equal(
+    parseAlert('A/C 1#19 deposited NPR 1,800.00 on 28/08/2026 (FBS:IBFT:-5797:22224).For Support:01-5970150'),
+    null
+  );
+});
+
+test('an amount with no RRN is not guessed at', () => {
+  assert.equal(parseAlert('Your account has been credited with Rs. 900.00 today.'), null);
+});
