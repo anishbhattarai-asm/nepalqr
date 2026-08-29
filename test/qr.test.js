@@ -135,6 +135,36 @@ test('optional reference fields land in tag 62 without losing existing subtags',
   assert.equal(additional['Terminal Label'], 'POS01'); // from the fixture
 });
 
+// 62.08 is the subtag a wallet shows the payer (eSewa renders it as Remarks),
+// so it is the one worth being sure survives a round trip with a valid CRC.
+test('purposeOfTransaction lands in tag 62.08 and reseals cleanly', () => {
+  const dynamicQR = withAmount(makeStaticQR(), 450.37, {
+    purposeOfTransaction: 'BAF-SXH',
+  });
+
+  assert.ok(validate(dynamicQR));
+  const { additional, amount } = decode(dynamicQR);
+  assert.equal(additional['Purpose of Transaction'], 'BAF-SXH');
+  assert.equal(additional['Terminal Label'], 'POS01'); // fixture subtag survives
+  assert.equal(amount, 450.37);
+});
+
+test('all four tag-62 subtags can be written at once', () => {
+  const dynamicQR = withAmount(makeStaticQR(), 10, {
+    billNumber: 'B-1',
+    referenceLabel: 'R-1',
+    terminalLabel: 'T-1',
+    purposeOfTransaction: 'P-1',
+  });
+
+  assert.ok(validate(dynamicQR));
+  const { additional } = decode(dynamicQR);
+  assert.equal(additional['Bill Number'], 'B-1');
+  assert.equal(additional['Reference Label'], 'R-1');
+  assert.equal(additional['Terminal Label'], 'T-1');
+  assert.equal(additional['Purpose of Transaction'], 'P-1');
+});
+
 test('withoutAmount returns a dynamic QR to static form', () => {
   const staticQR = makeStaticQR();
   const restored = withoutAmount(withAmount(staticQR, 450.37));

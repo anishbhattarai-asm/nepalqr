@@ -102,8 +102,42 @@ enough to build the POS against; useless for answering the question above.
 - `billNumber` → tag 62.01
 - `referenceLabel` → tag 62.05
 - `terminalLabel` → tag 62.07
+- `purposeOfTransaction` → tag 62.08 — the one a wallet shows the payer, see
+  below
 - `requireValidCRC` (default `true`) — refuse to modify a payload whose own CRC
   is already wrong, since that usually means a misread scan.
+
+## What a wallet actually shows
+
+If you put a reference in the QR so a customer can read it back to you, only
+one of these subtags reaches their screen.
+
+Six QRs were generated, identical but for which field carried the marker
+`TST-042`, and each was scanned with eSewa. Only tag **62.08** came through:
+
+| field | what eSewa's Scan & Pay showed |
+| --- | --- |
+| 62.01 Bill Number | `Payment of amount, 1` (eSewa's default) |
+| 62.03 Store Label | `Payment of amount, 1` |
+| 62.05 Reference Label | `Payment of amount, 1` |
+| 62.06 Customer Label | `Payment of amount, 1` |
+| **62.08 Purpose of Transaction** | **`TST-042`** — shown as **Remarks** |
+| tag 59 Merchant Name | shown, but it is the registered name, not a per-sale field |
+
+Two things that cost time to learn:
+
+- The row eSewa labels **"Purpose Of Payment"** (e.g. "Lifestyle &
+  Entertainment") is **not** 62.08. It is an expense category derived from the
+  merchant category code in tag 52. Reading that row as 62.08 leads to the
+  conclusion that the wallet ignores merchant free text entirely, which is
+  wrong.
+- The remark is **prefilled but editable** by the payer before they pay. It is
+  a way to match a payment to a sale, not evidence that one happened. Confirm
+  against the merchant's own record.
+
+This is one wallet at one point in time. Other wallets on the Fonepay network
+may map these differently, and the scan matrix above is cheap to repeat: the
+confirmation screen shows everything without paying.
 
 ## Notes
 

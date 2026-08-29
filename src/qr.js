@@ -83,9 +83,22 @@ function formatAmount(amount) {
  * @param {string} payload    A static merchant QR payload.
  * @param {number|string} amount
  * @param {object} [options]
- * @param {string} [options.billNumber]     -> tag 62.01
- * @param {string} [options.referenceLabel] -> tag 62.05
- * @param {string} [options.terminalLabel]  -> tag 62.07
+ * @param {string} [options.billNumber]           -> tag 62.01
+ * @param {string} [options.referenceLabel]       -> tag 62.05
+ * @param {string} [options.terminalLabel]        -> tag 62.07
+ * @param {string} [options.purposeOfTransaction] -> tag 62.08
+ *        The subtag a wallet shows the payer. Established against eSewa by
+ *        scanning six QRs that each carried the same marker in a different
+ *        field: only 62.08 came through, rendered as the "Remarks" value on
+ *        Scan & Pay. 62.01, 62.03, 62.05 and 62.06 all left eSewa's own
+ *        default text. See "What a wallet actually shows" in the README.
+ *
+ *        Not to be confused with the row eSewa labels "Purpose Of Payment",
+ *        which is an expense category derived from the merchant category code
+ *        in tag 52, not from here.
+ *
+ *        The payer can edit the remark before paying, so treat it as a way to
+ *        match a payment to a sale, never as evidence that one happened.
  * @param {boolean} [options.requireValidCRC=true]
  *        Refuse to modify a payload whose own CRC is already wrong — that
  *        usually means a bad scan, and re-sealing it would hide the damage.
@@ -110,6 +123,7 @@ export function withAmount(payload, amount, options = {}) {
     ['01', options.billNumber],
     ['05', options.referenceLabel],
     ['07', options.terminalLabel],
+    ['08', options.purposeOfTransaction],
   ].filter(([, value]) => value != null && value !== '');
 
   if (extras.length > 0) {
