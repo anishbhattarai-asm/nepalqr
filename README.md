@@ -124,13 +124,19 @@ Six QRs were generated, identical but for which field carried the marker
 | **62.08 Purpose of Transaction** | **`TST-042`** — shown as **Remarks** |
 | tag 59 Merchant Name | shown, but it is the registered name, not a per-sale field |
 
+A completed payment then confirmed 62.08 survives past the confirmation
+screen: on the finished transaction it appears as **Description**, so the
+payer keeps a permanent record carrying the reference, not just a prefilled
+box they saw once.
+
 Two things that cost time to learn:
 
 - The row eSewa labels **"Purpose Of Payment"** (e.g. "Lifestyle &
   Entertainment") is **not** 62.08. It is an expense category derived from the
-  merchant category code in tag 52. Reading that row as 62.08 leads to the
-  conclusion that the wallet ignores merchant free text entirely, which is
-  wrong.
+  merchant category code in tag 52. Both appear on the same receipt — 62.08 as
+  "Description", the MCC category as "Purpose Of Payment" — which is what makes
+  the mix-up easy. Reading that row as 62.08 leads to the conclusion that the
+  wallet ignores merchant free text entirely, which is wrong.
 - The remark is **prefilled but editable** by the payer before they pay. It is
   a way to match a payment to a sale, not evidence that one happened. Confirm
   against the merchant's own record.
