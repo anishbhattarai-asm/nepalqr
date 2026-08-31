@@ -99,6 +99,16 @@ function formatAmount(amount) {
  *
  *        The payer can edit the remark before paying, so treat it as a way to
  *        match a payment to a sale, never as evidence that one happened.
+ *
+ *        WARNING, applies to every tag 62 option above: writing any subtag into
+ *        tag 62 can stop the ISSUING BANK sending its instant payment alert.
+ *        Confirmed against NMB, where every variant leaving tag 62 alone
+ *        alerted within seconds and every variant adding subtags to it sent
+ *        nothing, while the payment settled normally in both cases. That alert
+ *        is often the merchant's only real-time proof of payment, since
+ *        settlement into the account lags by hours. Send a real payment through
+ *        your own QR and watch the merchant's phone before shipping these.
+ *        See the README.
  * @param {boolean} [options.requireValidCRC=true]
  *        Refuse to modify a payload whose own CRC is already wrong — that
  *        usually means a bad scan, and re-sealing it would hide the damage.

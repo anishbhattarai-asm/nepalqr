@@ -107,6 +107,10 @@ enough to build the POS against; useless for answering the question above.
 - `requireValidCRC` (default `true`) — refuse to modify a payload whose own CRC
   is already wrong, since that usually means a misread scan.
 
+Before using the four tag 62 options, read "The cost: tag 62 can suppress the
+bank's alert" below. On at least one issuer they stop the merchant's instant
+payment SMS arriving, while the payment itself settles normally.
+
 ## What a wallet actually shows
 
 If you put a reference in the QR so a customer can read it back to you, only
@@ -144,6 +148,45 @@ Two things that cost time to learn:
 This is one wallet at one point in time. Other wallets on the Fonepay network
 may map these differently, and the scan matrix above is cheap to repeat: the
 confirmation screen shows everything without paying.
+
+## The cost: tag 62 can suppress the bank's alert
+
+Writing those subtags is not free. On one issuer it silently costs the merchant
+their instant payment notification.
+
+Five variants of the same merchant QR, Rs 1 each, paid at a counter against an
+**NMB-issued** Fonepay merchant QR:
+
+| variant | alert SMS to the merchant |
+| --- | --- |
+| printed QR, untouched | arrives in 2 to 3 seconds |
+| amount, dynamic flag, no tag 62 | arrives |
+| amount, static flag, no tag 62 | arrives |
+| amount + tag 62 subtags, dynamic | **nothing** |
+| amount + tag 62 subtags, static | **nothing** |
+
+Every variant that leaves tag 62 alone alerts. Every variant that adds subtags
+to it stays silent. The tag 01 dynamic flip and the amount in tag 54 were both
+ruled innocent by the same run, which is worth stating because the flip is the
+obvious suspect and it is not the culprit.
+
+The payment settles either way. Only the notification is lost, which sounds
+minor and is not. Fonepay settles into the account on a roughly two hour batch,
+so at a counter the instant SMS is the only real-time proof a payment happened.
+A merchant who cannot see it either turns away a customer who has paid or hands
+over goods on trust.
+
+On that issuer the option also bought nothing in exchange. NMB's alert carries
+only amount, masked payer and RRN, with no remark field at all, so a reference
+written into tag 62 could never have reached the merchant's phone even when the
+alert did arrive. It reaches the payer's screen and their receipt, and nowhere
+else.
+
+One acquirer at one point in time, like everything else here. The general point
+is the transferable one: a QR that scans, pays and settles correctly can still
+break something downstream that no amount of decoding or CRC checking will
+reveal. Send a real payment through each variant against your own QR before
+shipping, and watch the **merchant's** phone, not just the payer's.
 
 ## Notes
 
