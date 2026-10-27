@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>nepalqr: dynamic amount on your merchant QR</title>
+<meta name="description" content="Scan your static merchant QR once, then charge any amount. Everything runs in your browser. Nothing is uploaded." />
+<meta name="theme-color" content="#0f172a" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icon-192.png" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="stylesheet" href="style.css" />
+<script src="vendor/jsQR.js"></script>
+<script src="vendor/qrcode.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="icon-192.png" alt="" width="28" height="28" />
+    <span>nepalqr</span>
+  </div>
+  <button id="installBtn" class="ghost" hidden>Install app</button>
+</header>
+
+<main>
+  <section id="setup" class="card">
+    <h1>Set up your QR once</h1>
+    <p class="lede">
+      Scan or paste the static merchant QR your bank gave you. It stays on this
+      device. Nothing is uploaded anywhere.
+    </p>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="scan" role="tab">Scan with camera</button>
+      <button class="tab" data-tab="paste" role="tab">Paste payload</button>
+    </div>
+
+    <div class="tabpanel" data-panel="scan">
+      <div id="scanWrap" class="scanwrap" hidden>
+        <video id="video" playsinline muted></video>
+        <div class="reticle"></div>
+      </div>
+      <button id="startScan" class="primary">Open camera</button>
+      <button id="stopScan" class="ghost" hidden>Stop camera</button>
+      <p id="scanHint" class="hint"></p>
+    </div>
+
+    <div class="tabpanel" data-panel="paste" hidden>
+      <textarea id="pasteInput" rows="4" placeholder="00020101021126…6304XXXX"></textarea>
+      <div class="row">
+        <button id="usePaste" class="primary">Use this QR</button>
+        <button id="useDemo" class="ghost">Try a demo QR</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="inspect" class="card warn" hidden>
+    <h2>Before you trust it</h2>
+    <div id="inspectBody"></div>
+  </section>
+
+  <section id="charge" class="card" hidden>
+    <div class="savedline">
+      <div>
+        <div class="muted">Saved merchant</div>
+        <strong id="merchantName"></strong>
+      </div>
+      <button id="forget" class="ghost small">Change QR</button>
+    </div>
+
+    <label class="amountfield">
+      <span>Amount (NPR)</span>
+      <input id="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" />
+    </label>
+
+    <div class="row">
+      <input id="remark" type="text" maxlength="25" placeholder="Remark (optional, e.g. order #12)" />
+    </div>
+
+    <div id="result" class="result" hidden>
+      <div id="qrcanvas" class="qrbox"></div>
+      <div class="resultmeta">
+        <div class="bigamount" id="shownAmount"></div>
+        <div class="muted" id="shownRemark"></div>
+        <button id="copyPayload" class="ghost small">Copy payload</button>
+      </div>
+    </div>
+    <p id="chargeHint" class="hint"></p>
+  </section>
+
+  <section class="card note">
+    <h2>Does this actually work?</h2>
+    <p>
+      Confirmed for <strong>Fonepay</strong> at one point in time: an injected
+      amount pre-filled and a payment settled. That is <em>not</em> a guarantee
+      for every bank. Another acquirer may sign its payloads and reject an
+      edited amount. <strong>Always test with a tiny amount (e.g. Rs 1) on your
+      own QR before relying on it.</strong> The check above flags fields that
+      look like issuer signatures, but only a live scan truly settles it.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <span>Runs entirely in your browser · no server · no data leaves this device</span>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

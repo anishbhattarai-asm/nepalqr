@@ -83,6 +83,30 @@ $ npx nepalqr fixture --signed     # one carrying a fake issuer signature
 Structurally real, invented merchant identifiers, will not move money. Good
 enough to build the POS against; useless for answering the question above.
 
+## Web app (`docs/`)
+
+`docs/` is a self-contained, installable web app that runs this codec entirely
+in the browser, with no server and nothing uploaded. A merchant scans their static QR
+once (camera or paste), then types an amount and gets a dynamic QR to show the
+customer. It is a PWA, so it installs to the home screen and works offline.
+
+```
+$ python3 -m http.server -d docs 8000   # then open http://localhost:8000
+```
+
+To publish, point GitHub Pages at the `docs/` folder on the default branch.
+
+The page uses the real library source, copied into `docs/lib/` so it is
+servable as static files. Keep it in sync after changing `src/`:
+
+```
+$ npm run build:web
+```
+
+The camera scanner (`jsQR`) and the QR image generator (`qrcode-generator`)
+are vendored under `docs/vendor/` with their licences, so the app has no
+network dependency at runtime.
+
 ## API
 
 | Function | Purpose |
