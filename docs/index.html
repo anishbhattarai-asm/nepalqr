@@ -77,11 +77,24 @@
       <input id="remark" type="text" maxlength="25" placeholder="Remark (optional, e.g. order #12)" />
     </div>
 
+    <label class="expiryfield">
+      <span>Hide QR after</span>
+      <select id="expiry">
+        <option value="0">Never</option>
+        <option value="60">1 min</option>
+        <option value="120">2 min</option>
+        <option value="300">5 min</option>
+        <option value="600">10 min</option>
+      </select>
+    </label>
+
     <div id="result" class="result" hidden>
       <div id="qrcanvas" class="qrbox"></div>
+      <button id="expired" class="primary" hidden>QR expired. Show again</button>
       <div class="resultmeta">
         <div class="bigamount" id="shownAmount"></div>
         <div class="muted" id="shownRemark"></div>
+        <div class="muted" id="timer"></div>
         <button id="copyPayload" class="ghost small">Copy payload</button>
       </div>
     </div>

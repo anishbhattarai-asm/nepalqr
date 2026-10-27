@@ -88,7 +88,7 @@ button {
 .row { display: flex; gap: 8px; flex-wrap: wrap; }
 .row > * { flex: 1; min-width: 0; }
 
-textarea, input[type="text"], input[type="number"] {
+textarea, select, input[type="text"], input[type="number"] {
   width: 100%;
   background: var(--card2);
   border: 1px solid var(--line);
@@ -132,6 +132,10 @@ textarea { resize: vertical; font-family: ui-monospace, monospace; font-size: 0.
 .amountfield { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
 .amountfield span { color: var(--muted); font-size: 0.85rem; }
 #amount { font-size: 1.6rem; font-weight: 700; }
+
+.expiryfield { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+.expiryfield span { color: var(--muted); font-size: 0.85rem; }
+.expiryfield select { width: auto; }
 
 .result {
   margin-top: 16px;

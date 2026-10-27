@@ -3,11 +3,12 @@ import {
   decode,
   validate,
   detectOpaqueFields,
-} from './lib/index.js';
+} from './lib/qr.js';
 import { makeStaticQR } from './lib/fixture.js';
 
 const $ = (id) => document.getElementById(id);
 const STORAGE_KEY = 'nepalqr.payload';
+const EXPIRY_KEY = 'nepalqr.expiry';
 
 // Loaded as classic scripts in index.html.
 const qrcode = window.qrcode;
@@ -96,6 +97,7 @@ function render() {
   const hint = $('chargeHint');
 
   if (!raw || !(amount > 0)) {
+    clearInterval(timerId);
     result.hidden = true;
     setHint(hint, '');
     return;
@@ -115,6 +117,7 @@ function render() {
   $('shownRemark').textContent = remark ? '“' + remark + '”' : '';
   result.hidden = false;
   $('copyPayload').onclick = () => copy(dynamic);
+  startTimer();
 
   setHint(
     hint,
@@ -134,10 +137,49 @@ function drawQR(data) {
   if (img) { img.alt = 'Dynamic payment QR'; img.removeAttribute('width'); img.removeAttribute('height'); }
 }
 
+let timerId = null;
+
+function startTimer() {
+  clearInterval(timerId);
+  showQR(true);
+  const secs = Number($('expiry').value);
+  if (!secs) return;
+  const end = Date.now() + secs * 1000;
+  const tick = () => {
+    const left = Math.ceil((end - Date.now()) / 1000);
+    if (left <= 0) {
+      clearInterval(timerId);
+      showQR(false);
+      return;
+    }
+    $('timer').textContent =
+      'Hides in ' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+  };
+  tick();
+  timerId = setInterval(tick, 1000);
+}
+
+function showQR(visible) {
+  $('qrcanvas').hidden = !visible;
+  $('copyPayload').hidden = !visible;
+  $('expired').hidden = visible;
+  $('timer').textContent = '';
+}
+
+$('expired').addEventListener('click', startTimer);
+$('expiry').addEventListener('change', () => {
+  try { localStorage.setItem(EXPIRY_KEY, $('expiry').value); } catch {}
+  if (!$('result').hidden) startTimer();
+});
+try {
+  $('expiry').value = localStorage.getItem(EXPIRY_KEY) || '0';
+} catch {}
+
 $('amount').addEventListener('input', render);
 $('remark').addEventListener('input', render);
 
 $('forget').addEventListener('click', () => {
+  clearInterval(timerId);
   payload = null;
   try { localStorage.removeItem(STORAGE_KEY); } catch {}
   $('charge').hidden = true;

@@ -1,5 +1,5 @@
 // Bump CACHE when any asset changes.
-const CACHE = 'nepalqr-v1';
+const CACHE = 'nepalqr-v2';
 
 const ASSETS = [
   '.',
@@ -11,14 +11,11 @@ const ASSETS = [
   'icon-512.png',
   'vendor/jsQR.js',
   'vendor/qrcode.js',
-  'lib/index.js',
   'lib/crc.js',
   'lib/tlv.js',
   'lib/tags.js',
   'lib/qr.js',
   'lib/fixture.js',
-  'lib/payments.js',
-  'lib/alerts.js',
 ];
 
 self.addEventListener('install', (event) => {
