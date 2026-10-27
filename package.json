@@ -17,7 +17,8 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "build:web": "rm -rf docs/lib && cp -r src docs/lib"
   },
   "keywords": [
     "emvco",
